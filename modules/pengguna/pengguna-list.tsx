@@ -12,7 +12,7 @@ const placeholderProps = {
 type User = {
   name: string;
   email: string;
-  role: "bank" | "notaris" | "user";
+  role: "bank" | "notaris" | "user" | "admin-bpn";
 };
 
 export function UserList() {
@@ -47,7 +47,7 @@ export function UserList() {
                   </div>
                 )}
                 {person.role === "user" && (
-                  <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+                  <div className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-700/10">
                     Penjual/Pembeli
                   </div>
                 )}
@@ -55,6 +55,11 @@ export function UserList() {
                   <div className="inline-flex items-center rounded-md bg-pink-50 px-2 py-1 text-xs font-medium text-pink-700 ring-1 ring-inset ring-pink-700/10">
                     Notaris
                   </div>
+                )}
+                {person.role === "admin-bpn" && (
+                  <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                    Admin BPN
+                  </span>
                 )}
               </div>
             </div>

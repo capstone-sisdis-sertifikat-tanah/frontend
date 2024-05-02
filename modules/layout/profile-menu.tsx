@@ -41,6 +41,22 @@ export function ProfileMenu() {
             <Menu.Item>
               {({ active }) => (
                 <button
+                  onClick={() => router.push("/akun")}
+                  className={classNames(
+                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    "block w-full px-4 py-2 text-left text-sm"
+                  )}
+                >
+                  <div className="flex gap-2 items-center">
+                    <RiSettingsLine className={classNames(active ? "text-gray-800" : "text-gray-600", "w-4 h-4")} />{" "}
+                    Pengaturan akun
+                  </div>
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
                   onClick={() => router.push("/sertifikat/verifikasi")}
                   className={classNames(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
