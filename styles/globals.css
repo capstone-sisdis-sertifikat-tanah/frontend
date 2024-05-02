@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    text-rendering: optimizeLegibility;
+    --color-error: #ff5b5b;
+  }
+}
+
+.leaflet-control {
+  z-index: 0 !important;
+}
+.leaflet-pane {
+  z-index: 0 !important;
+}
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 0 !important;
+}
+
+.indicator {
+  background-color: var(--color-error);
+  animation-name: pulse;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-fill-mode: none;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 91, 91, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(255, 91, 91, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 91, 91, 0);
+  }
+}
+
+/* #region  /**=========== Scrollbar =========== */
+
+@media screen and (min-width: 768px) {
+  ::-webkit-scrollbar,
+  .scrollbar ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track,
+  .scrollbar ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  }
+  ::-webkit-scrollbar-thumb,
+  .scrollbar ::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    opacity: 0.5;
+  }
+  ::-webkit-scrollbar-thumb:hover,
+  ::-webkit-scrollbar-thumb:active,
+  .scrollbar ::-webkit-scrollbar-thumb:hover,
+  .scrollbar ::-webkit-scrollbar-thumb:active {
+    background: #a7a7a7;
+  }
+}
+
+/* Firefox */
+html,
+.scrollbar {
+  scrollbar-width: thin;
+}
+
+/* Hide Scrollbar */
+.scrollbar-none::-webkit-scrollbar {
+  /* WebKit: Chrome, Safari */
+  display: none;
+}
+
+.scrollbar-none {
+  /* IE 10+ */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+}
+/* #endregion  /**======== Scrollbar =========== */
