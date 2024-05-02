@@ -10,7 +10,7 @@ import { Sertifikat } from "@/modules/sertifikat/sertifikat-list";
 export function VerifikasiSertifikat() {
   const [pdfBlobUrl, setPdfBlobUrl] = React.useState<string | null>(null);
 
-  const { trigger, data, isMutating, reset } = useMutation("/verify");
+  const { trigger, data, isMutating, reset } = useMutation("/sertifikat/verify");
 
   const shipmentData = data?.data?.data?.data?.sertifikat as Sertifikat;
 
@@ -30,7 +30,7 @@ export function VerifikasiSertifikat() {
         {pdfBlobUrl && data ? (
           <div className="px-4">
             <Text className="mt-4 text-xl font-medium text-black flex gap-2 items-center">
-              Invoice perjalanan valid <RiCheckboxCircleFill className="text-emerald-600" />
+              Sertifikat perjalanan valid <RiCheckboxCircleFill className="text-emerald-600" />
             </Text>
             <SertifikatDetails details={shipmentData} isLoading={isMutating} />
           </div>

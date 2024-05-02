@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Grid } from "@/components/grid";
 import { LoginForm } from "@/modules/auth/login-form";
-import { LoginFooter } from "@/modules/auth/login-footer";
 
 export default function LoginPage() {
   return (
@@ -9,7 +8,6 @@ export default function LoginPage() {
       <Image src="/images/cover.jpg" alt="" className="object-cover" fill />
       <Grid />
       <LoginForm />
-      <LoginFooter />
     </main>
   );
 }

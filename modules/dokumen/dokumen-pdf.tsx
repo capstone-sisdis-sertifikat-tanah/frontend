@@ -25,13 +25,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  invoiceInfo: {
+  sertifikatInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 10,
     marginTop: 40,
   },
-  invoiceInfoItem: {
+  sertifikatInfoItem: {
     width: "50%",
   },
   item: {
@@ -53,10 +53,10 @@ const styles = StyleSheet.create({
   },
 });
 
-// Sample invoice data
-const invoiceData = {
-  invoiceNumber: "INV-001",
-  invoiceDate: "April 26, 2024",
+// Sample sertifikat data
+const sertifikatData = {
+  sertifikatNumber: "INV-001",
+  sertifikatDate: "April 26, 2024",
   dueDate: "May 10, 2024",
   companyName: "ABC Company",
   companyAddress: "123 Main Street, Cityville, ABC",
@@ -76,31 +76,31 @@ export function DokumenPDF({ identifier }: { identifier: string }) {
       <Page size="LETTER" style={styles.page}>
         <View style={styles.header}>
           <Text style={styles.headerText}>INVOICE</Text>
-          <View style={styles.invoiceInfo}>
-            <View style={styles.invoiceInfoItem}>
-              <Text>Invoice #: {invoiceData.invoiceNumber}</Text>
-              <Text>Date: {invoiceData.invoiceDate}</Text>
+          <View style={styles.sertifikatInfo}>
+            <View style={styles.sertifikatInfoItem}>
+              <Text>Sertifikat #: {sertifikatData.sertifikatNumber}</Text>
+              <Text>Date: {sertifikatData.sertifikatDate}</Text>
             </View>
-            <View style={styles.invoiceInfoItem}>
-              <Text>Due Date: {invoiceData.dueDate}</Text>
-              <Text>Client: {invoiceData.clientName}</Text>
+            <View style={styles.sertifikatInfoItem}>
+              <Text>Due Date: {sertifikatData.dueDate}</Text>
+              <Text>Client: {sertifikatData.clientName}</Text>
             </View>
           </View>
         </View>
         <View style={styles.section}>
-          <Text>From: {invoiceData.companyName}</Text>
-          <Text>{invoiceData.companyAddress}</Text>
+          <Text>From: {sertifikatData.companyName}</Text>
+          <Text>{sertifikatData.companyAddress}</Text>
         </View>
         <View style={styles.section}>
-          <Text>To: {invoiceData.clientName}</Text>
-          <Text>{invoiceData.clientAddress}</Text>
+          <Text>To: {sertifikatData.clientName}</Text>
+          <Text>{sertifikatData.clientAddress}</Text>
         </View>
         <View style={styles.section}>
           <View style={styles.item}>
             <Text style={styles.itemDescription}>Description</Text>
             <Text style={styles.itemAmount}>Amount</Text>
           </View>
-          {invoiceData.items.map((item, index) => (
+          {sertifikatData.items.map((item, index) => (
             <View style={styles.item} key={index}>
               <Text style={styles.itemDescription}>{item.description}</Text>
               <Text style={styles.itemAmount}>${item.amount}</Text>
@@ -109,7 +109,7 @@ export function DokumenPDF({ identifier }: { identifier: string }) {
         </View>
         <View style={styles.totalAmount}>
           <Text>Total:</Text>
-          <Text>${invoiceData.totalAmount}</Text>
+          <Text>${sertifikatData.totalAmount}</Text>
         </View>
       </Page>
     </Document>
@@ -144,7 +144,7 @@ export function DokumenTanah({ id }: { id: string }) {
 
             setIsOpen(true);
           } catch (e) {
-            toast.error("Gagal memuat invoice.");
+            toast.error("Gagal memuat sertifikat.");
           }
         }}
       >
@@ -156,7 +156,7 @@ export function DokumenTanah({ id }: { id: string }) {
           <div className="flex justify-end">
             <PDFDownloadLink document={<DokumenPDF identifier={identifier} />} fileName="dokumen-tanah.pdf">
               {({ blob, url, loading, error }) => (
-                <Button className="rounded-tremor-small">{loading ? "Memuat invoice..." : "Unduh"}</Button>
+                <Button className="rounded-tremor-small">{loading ? "Memuat sertifikat..." : "Unduh"}</Button>
               )}
             </PDFDownloadLink>
           </div>

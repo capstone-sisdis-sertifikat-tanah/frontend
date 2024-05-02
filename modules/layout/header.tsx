@@ -14,19 +14,50 @@ const navigation: {
   }>;
 } = {
   "admin-bpn": [
-    { name: <RiDashboardLine className="w-5 h-5" />, href: "/dashboard" },
-    // { name: "Pengguna", href: "/pengguna" },
+    {
+      name: (
+        <span className="flex items-center gap-2">
+          <RiDashboardLine className="w-5 h-5" />
+          Halaman Utama
+        </span>
+      ),
+      href: "/dashboard",
+    },
   ],
   bank: [
-    { name: <RiDashboardLine className="w-5 h-5" />, href: "/dashboard" },
+    {
+      name: (
+        <span className="flex items-center gap-2">
+          <RiDashboardLine className="w-5 h-5" />
+          Halaman Utama
+        </span>
+      ),
+      href: "/dashboard",
+    },
     // { name: "Dokumen", href: "/dokumen" },
   ],
   notaris: [
-    { name: <RiDashboardLine className="w-5 h-5" />, href: "/dashboard" },
+    {
+      name: (
+        <span className="flex items-center gap-2">
+          <RiDashboardLine className="w-5 h-5" />
+          Halaman Utama
+        </span>
+      ),
+      href: "/dashboard",
+    },
     // { name: "Dokumen", href: "/dokumen" },
   ],
   user: [
-    { name: <RiDashboardLine className="w-5 h-5" />, href: "/dashboard" },
+    {
+      name: (
+        <span className="flex items-center gap-2">
+          <RiDashboardLine className="w-5 h-5" />
+          Halaman Utama
+        </span>
+      ),
+      href: "/dashboard",
+    },
     { name: "Akta Tanah", href: "/akta-tanah" },
     // { name: "Sertifikat Tanah", href: "/sertifikat-tanah" },
   ],

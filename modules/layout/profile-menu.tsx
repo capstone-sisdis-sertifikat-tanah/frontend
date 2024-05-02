@@ -41,7 +41,7 @@ export function ProfileMenu() {
             <Menu.Item>
               {({ active }) => (
                 <button
-                  onClick={() => router.push("/invoice/verifikasi")}
+                  onClick={() => router.push("/sertifikat/verifikasi")}
                   className={classNames(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block w-full px-4 py-2 text-left text-sm"
@@ -49,7 +49,7 @@ export function ProfileMenu() {
                 >
                   <div className="flex gap-2 items-center">
                     <RiQrScan2Line className={classNames(active ? "text-gray-800" : "text-gray-600", "w-4 h-4")} />{" "}
-                    Verifikasi Invoice
+                    Verifikasi Sertifikat
                   </div>
                 </button>
               )}

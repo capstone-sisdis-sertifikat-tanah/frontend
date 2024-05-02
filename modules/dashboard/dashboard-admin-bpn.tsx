@@ -1,36 +1,33 @@
 import React from "react";
-import { Card } from "@tremor/react";
-import { useUser } from "@/hooks/use-user";
-import useSWR from "swr";
+import { Divider } from "@tremor/react";
 import { Text } from "@tremor/react";
-import clsx from "clsx";
-import { useBanner } from "@/hooks/use-banner";
-import { Tabs } from "@/components/tabs";
+import { UserList } from "../pengguna/pengguna-list";
+import { InviteUser } from "../pengguna/invite-pengguna";
+import { Info } from "@/components/info";
+
+const info = {
+  title: "Undang pengguna baru",
+  description: "Pengguna dapat berupa bank, notaris, ataupun penjual/pembeli.",
+};
 
 export default function DashboardAdminBPN() {
-  const {
-    user: { username },
-  } = useUser();
-
   return (
     <main>
-      <h1 className="text-tremor-title font-semibold">Rincian Perusahaan</h1>
-      <Text className="mt-0.5">Informasi umum, supply chain, dan emisi karbon perusahaan Anda.</Text>
+      <h1 className="text-tremor-title font-semibold">Manajemen Pengguna</h1>
+      <Text className="mt-0.5">Daftar Pengguna yang terdaftar di platform Sistem Penerbitan Sertifikat Tanah.</Text>
 
-      <div className="mt-4">
-        {/* <Tabs
-          tabList={["Rincian", "Supply Chain", "Emisi Karbon"]}
-          tabPanels={[
-            () => <CompanyDetails details={company?.data} isLoading={isLoading} />,
-            () => (
-              <>
-                {company?.data.supplyChain.length !== 0 && <CreateSupplyChain details={company?.data} />}
-                <ListSupplyChain details={company?.data} />
-              </>
-            ),
-            () => <DetailEmisiKarbon details={company?.data} />,
-          ]}
-        /> */}
+      <div className="mt-8 space-y-8">
+        <div>
+          <Info {...info} />
+          <InviteUser />
+        </div>
+
+        <Divider />
+
+        <div>
+          <Info title="Pengguna yang terdaftar" />
+          <UserList />
+        </div>
       </div>
     </main>
   );

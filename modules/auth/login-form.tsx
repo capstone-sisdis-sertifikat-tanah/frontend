@@ -59,7 +59,7 @@ export function LoginForm() {
           variant="secondary"
         >
           <div className="flex gap-2 items-center">
-            <RiQrScan2Line className="w-4 h-4" /> Verifikasi Invoice
+            <RiQrScan2Line className="w-4 h-4" /> Verifikasi Sertifikat
           </div>
         </Button>
       </div>

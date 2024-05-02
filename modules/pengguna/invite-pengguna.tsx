@@ -43,39 +43,34 @@ export function InviteUser() {
           className="w-full sm:w-fit rounded-tremor-small"
           required
         />
-        <Controller
-          render={({ field }) => (
-            <Select
-              {...field}
-              placeholder="Pilih tipe bahan bakar"
-              className="mt-2 w-full rounded-tremor-small sm:max-w-lg"
-              required
-            >
-              {["Penjual/Pembeli", "Bank", "Notaris"].map((type) => {
-                return (
-                  <SelectItem key={type} value={type.toLowerCase()}>
-                    {type}
-                  </SelectItem>
-                );
-              })}
-            </Select>
-          )}
-          name="role"
-          control={control}
-        />
-        <div className="flex gap-2 w-full">
-          <TextInput
-            {...register("email")}
-            type="email"
-            id="email"
-            placeholder="Masukkan email..."
-            className="w-full rounded-tremor-small sm:max-w-xs"
-            required
+        <div className="w-full sm:max-w-xs">
+          <Controller
+            render={({ field }) => (
+              <Select {...field} placeholder="Pilih tipe pengguna" className="w-full rounded-tremor-small" required>
+                {["Penjual/Pembeli", "Bank", "Notaris"].map((type) => {
+                  return (
+                    <SelectItem key={type} value={type.toLowerCase()}>
+                      {type}
+                    </SelectItem>
+                  );
+                })}
+              </Select>
+            )}
+            name="role"
+            control={control}
           />
-          <Button loading={isMutating} type="submit" className="rounded-tremor-small">
-            Undang
-          </Button>
         </div>
+        <TextInput
+          {...register("email")}
+          type="email"
+          id="email"
+          placeholder="Masukkan email..."
+          className="w-full rounded-tremor-small sm:max-w-xs"
+          required
+        />
+        <Button loading={isMutating} type="submit" className="rounded-tremor-small">
+          Undang
+        </Button>
       </div>
     </form>
   );

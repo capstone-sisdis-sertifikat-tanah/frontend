@@ -61,7 +61,8 @@ function getSteps(details: Sertifikat) {
         name: "Perjalanan selesai",
         description: (
           <span>
-            Perjalanan <b>{details.id}</b> telah selesai. Anda bisa melihat invoice perjalanan di bagian bawah halaman.
+            Perjalanan <b>{details.id}</b> telah selesai. Anda bisa melihat sertifikat perjalanan di bagian bawah
+            halaman.
           </span>
         ),
         status: "complete",
