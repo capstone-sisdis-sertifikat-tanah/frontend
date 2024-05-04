@@ -2,7 +2,7 @@ import React from "react";
 import { Text } from "@tremor/react";
 import { RiArrowGoBackLine } from "@remixicon/react";
 import { useRouter } from "next/navigation";
-import { VerifikasiSertifikat } from "@/modules/verifikasi/verifikasi-sertifikat";
+import { VerifikasiSertifikat } from "@/modules/verifikasi";
 
 export default function Verifikasi() {
   const router = useRouter();

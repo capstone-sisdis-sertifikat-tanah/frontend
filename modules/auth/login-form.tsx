@@ -1,7 +1,6 @@
 import { Button, TextInput } from "@tremor/react";
 import { useForm } from "react-hook-form";
 import { LoginFormValues, useUser } from "@/hooks/use-user";
-import { RiQrScan2Line } from "@remixicon/react";
 import { useRouter } from "next/navigation";
 
 export function LoginForm() {
@@ -52,16 +51,6 @@ export function LoginForm() {
             Masuk
           </Button>
         </form>
-
-        <Button
-          onClick={() => router.push("/verifikasi")}
-          className="mt-6 rounded-tremor-small w-full"
-          variant="secondary"
-        >
-          <div className="flex gap-2 items-center">
-            <RiQrScan2Line className="w-4 h-4" /> Verifikasi Sertifikat
-          </div>
-        </Button>
       </div>
     </div>
   );
