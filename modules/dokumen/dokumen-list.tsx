@@ -1,76 +1,81 @@
 import useSWR from "swr";
 
-import { EmptyPlaceholder } from "../template/empty-placeholder";
-import { LoadingPlaceholder } from "../template/loading-placeholder";
-import { useUser } from "@/hooks/use-user";
+import { EmptyPlaceholder, LoadingPlaceholder, SmallLoadingPlaceholder } from "@/modules/template";
 import Link from "next/link";
 import { Card } from "@tremor/react";
-import { RiArrowRightUpLine, RiTruckLine } from "@remixicon/react";
-import { getReadableDateTime } from "@/lib";
+import { RiArrowRightUpLine, RiArticleLine } from "@remixicon/react";
 import clsx from "clsx";
+import { useUser } from "@/hooks/use-user";
+import { SertifikatDetails } from "../sertifikat";
 
 const placeholderProps = {
-  title: "Dokumen tidak ditemukan",
-  description: "Setiap dokumen tanah akan tercatat disini.",
+  title: "Pengajuan tidak ditemukan",
+  description: "Setiap pengajuan pembelian/penjualan tanah akan tercatat disini.",
 };
+
+type DokumenStatus = "Menunggu Persetujuan Bank" | "Menunggu Persetujuan Notaris" | "Approve" | "reject";
 
 export type Dokumen = {
   id: string;
-  idPerusahaan: string;
-  idSupplyChain: string;
-  status: "Need Approval" | "Completed" | "Rejected";
-  waktuBerangkat: string;
-  waktuSampai: string;
-  beratMuatan: number;
-  emisiKarbon: number;
+  idSertifikat: string;
+  status: DokumenStatus;
+  idPembeli: string;
+  idPenjual: string;
+  approvers: Array<string>;
 };
 
 export const statuses = {
-  "Need Approval": "text-yellow-800 bg-yellow-50 ring-yellow-600/20",
-  Completed: "text-green-700 bg-green-50 ring-green-600/20",
-  Rejected: "text-red-700 bg-red-50 ring-red-600/20",
+  "Menunggu Persetujuan Bank": "text-yellow-800 bg-yellow-50 ring-yellow-600/20",
+  "Menunggu Persetujuan Notaris": "text-yellow-800 bg-yellow-50 ring-yellow-600/20",
+  Approve: "text-green-700 bg-green-50 ring-green-600/20",
+  reject: "text-red-700 bg-red-50 ring-red-600/20",
 };
 
 export const statusText = {
-  "Need Approval": "Dalam Perjalanan",
-  Completed: "Perjalanan Selesai",
-  Rejected: "Perjalanan Dibatalkan",
+  "Menunggu Persetujuan Bank": "Menunggu Persetujuan Bank",
+  "Menunggu Persetujuan Notaris": "Menunggu Persetujuan Notaris",
+  Approve: "Disetujui",
+  reject: "Ditolak",
 };
 
-export function DokumenList() {
+export function DokumenList({
+  type,
+  status,
+}: {
+  type: "pembeli" | "penjual" | "all";
+  status?: "Menunggu Persetujuan" | "Approve" | "reject";
+}) {
   const {
     user: { id },
   } = useUser();
 
-  const { data, isLoading } = useSWR<{ data: Array<Dokumen> }>(`/dokumen/pemilik/${id}`);
+  const { data: dokumenData, isLoading } = useSWR<{ data: Array<Dokumen> }>(
+    type === "all" ? "/dokumen" : `/dokumen/${type}/${id}`
+  );
 
   if (isLoading) {
     return <LoadingPlaceholder />;
   }
 
-  if (data?.data.length === 0 || !data) {
+  const data = dokumenData?.data.filter((dokumen) => (status ? dokumen.status.includes(status) : true)) ?? [];
+
+  if (data.length === 0 || !data) {
     return <EmptyPlaceholder {...placeholderProps} />;
   }
 
   return (
     <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {data?.data.map((dokumen) => {
-        const isWaitingBerangkat = new Date(dokumen.waktuBerangkat) > new Date() && dokumen.status === "Need Approval";
-
+      {data?.map((dokumen) => {
         return (
-          <Link href={`/dokumen/${dokumen.id}`} key={dokumen.id}>
+          <Link href={`/pengajuan/${dokumen.id}`} key={dokumen.id}>
             <Card className="group px-4 pt-5 pb-1">
               <div className="flex space-x-2 items-center">
                 <div className="p-2 shrink-0">
-                  <RiTruckLine className="w-12 h-12 text-gray-600" />
+                  <RiArticleLine className="w-12 h-12 text-gray-600" />
                 </div>
                 <div className="mt-1 overflow-hidden">
-                  <p className="truncate text-tremor-default font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                    {getReadableDateTime(dokumen.waktuBerangkat)}
-                  </p>
-                  <p className="mt-1 line-clamp-1 text-xs text-tremor-content dark:text-dark-tremor-content">
-                    {dokumen.beratMuatan} kg
-                  </p>
+                  <p className="line-clamp-2 text-xs">{dokumen.id}</p>
+                  <LokasiTanah idSertifikat={dokumen.idSertifikat} />
                 </div>
               </div>
               <div className="mt-2 grid place-items-end divide-x divide-tremor-border border-t border-tremor-border dark:divide-dark-tremor-border dark:border-dark-tremor-border">
@@ -81,7 +86,7 @@ export function DokumenList() {
                       "rounded-md w-fit mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
                     )}
                   >
-                    {isWaitingBerangkat ? "Menunggu Waktu Berangkat" : statusText[dokumen.status]}
+                    {statusText[dokumen.status]}
                   </p>
                 </div>
               </div>
@@ -97,4 +102,16 @@ export function DokumenList() {
       })}
     </div>
   );
+}
+
+function LokasiTanah({ idSertifikat }: { idSertifikat: string }) {
+  const { data: sertifikat, isLoading: isLoadingSertifikat } = useSWR<{ data: SertifikatDetails }>(
+    `/sertifikat/${idSertifikat}`
+  );
+
+  if (isLoadingSertifikat) {
+    return <SmallLoadingPlaceholder />;
+  }
+
+  return <p className="mt-1 line-clamp-2 pr-4 text-xs text-tremor-content">{sertifikat?.data.lokasi}</p>;
 }

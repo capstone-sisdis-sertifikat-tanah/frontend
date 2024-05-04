@@ -4,36 +4,16 @@ import { EmptyPlaceholder, LoadingPlaceholder } from "@/modules/template";
 import Link from "next/link";
 import { Card } from "@tremor/react";
 import { RiArrowRightUpLine, RiArticleLine } from "@remixicon/react";
-import { getReadableDateTime } from "@/lib";
 import clsx from "clsx";
+import { Sertifikat, statuses } from "@/modules/sertifikat";
 
 const placeholderProps = {
-  title: "Sertifikat tidak ditemukan",
-  description: "Setiap sertifikat tanah akan tercatat disini.",
+  title: "Tanah tidak ditemukan",
+  description: "Setiap tanah yang terdaftar akan ditampilkan disini.",
 };
 
-export type Sertifikat = {
-  id: string;
-  idPemilik: string;
-  idAkta: string;
-  lat: string;
-  long: string;
-  lokasi: string;
-};
-
-export const statuses = {
-  pending: "text-yellow-800 bg-yellow-50 ring-yellow-600/20",
-  valid: "text-green-700 bg-green-50 ring-green-600/20",
-};
-
-export const statusText = {
-  "Need Approval": "Dalam Perjalanan",
-  Completed: "Perjalanan Selesai",
-  Rejected: "Perjalanan Dibatalkan",
-};
-
-export function SertifikatList() {
-  const { data, isLoading } = useSWR<{ data: Array<Sertifikat> }>("/sertifikat/pemilik");
+export function TanahList() {
+  const { data, isLoading } = useSWR<{ data: Array<Sertifikat> }>("/sertifikat");
 
   if (isLoading) {
     return <LoadingPlaceholder />;

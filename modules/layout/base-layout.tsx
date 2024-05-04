@@ -4,8 +4,18 @@ import React from "react";
 import { Header } from "./header";
 import clsx from "clsx";
 
-const unauthenticatedPaths = ["/login", "/register", "/password/reset", "/verifikasi"];
-const authenticatedPaths = ["/dashboard", "/akun", "/pengguna", "/sertifikat", "/akta-tanah", "/dokumen"];
+const unauthenticatedPaths = ["/login", "/register", "/password/reset"];
+const authenticatedPaths = [
+  "/dashboard",
+  "/akun",
+  "/pengguna",
+  "/sertifikat",
+  "/akta-tanah",
+  "/dokumen",
+  "/pengajuan",
+  "/verifikasi",
+  "/tanah",
+];
 
 export default function BaseLayout({ children }: { children: React.ReactNode }) {
   const { state, user } = useUser();

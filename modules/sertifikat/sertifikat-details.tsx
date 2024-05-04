@@ -2,9 +2,12 @@ import React from "react";
 import { LoadingDetailsPlaceholder } from "@/modules/template";
 import { statuses } from "./sertifikat-list";
 import clsx from "clsx";
-import { RiAttachment2 } from "@remixicon/react";
+import { RiArrowRightUpLine, RiArticleLine, RiAttachment2 } from "@remixicon/react";
 import { Steps } from "@/components/steps";
 import dynamic from "next/dynamic";
+import { useUser } from "@/hooks/use-user";
+import { CreateDokumen } from "../dokumen/create-dokumen";
+import Link from "next/link";
 
 const ReadOnlyMap = dynamic(() => import("@/components/map/read-only-map"), {
   ssr: false,
@@ -12,7 +15,6 @@ const ReadOnlyMap = dynamic(() => import("@/components/map/read-only-map"), {
 
 export type SertifikatDetails = {
   id: string;
-  idPemilik: string;
   akta: {
     id: string;
     idDokumen: string;
@@ -23,6 +25,12 @@ export type SertifikatDetails = {
     lat: string;
     long: string;
     TxId: Array<string>;
+  };
+  pemilik: {
+    id: string;
+    email: string;
+    name: string;
+    role: "user";
   };
   lat: string;
   long: string;
@@ -90,6 +98,10 @@ export function SertifikatDetails({
   details: SertifikatDetails | undefined;
   isLoading: boolean;
 }) {
+  const {
+    user: { userType },
+  } = useUser();
+
   if (isLoading) {
     return <LoadingDetailsPlaceholder />;
   }
@@ -116,6 +128,49 @@ export function SertifikatDetails({
             </div>
           </dd>
         </div>
+
+        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt className="text-sm font-medium leading-6 text-gray-900">Pemilik</dt>
+          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <a href={`mailto:${details.pemilik.email}`} className="truncate hover:underline text-tremor-brand">
+              {details.pemilik.email}
+            </a>
+          </dd>
+        </div>
+
+        {details.akta && (
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Akta Tanah</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+              <div className="group relative sm:max-w-sm border shadow-sm rounded-md">
+                <Link href={`/akta-tanah/${details.akta.id}`}>
+                  <div className="group px-4 py-5">
+                    <div className="w-full flex items-center min-w-0 gap-x-4">
+                      <RiArticleLine className="shrink-0 w-10 h-10 text-gray-500" />
+                      <div>
+                        <p className="text-sm font-semibold leading-6 text-gray-900">{details.akta.id}</p>
+                        {/* <p
+                          className={clsx(
+                            statuses[details.akta.status],
+                            "rounded-md w-fit mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
+                          )}
+                        >
+                          {statusText[details.akta.status]}
+                        </p> */}
+                      </div>
+                    </div>
+                    <span
+                      className="pointer-events-none absolute right-4 top-4 text-tremor-content-subtle group-hover:text-tremor-content dark:text-dark-tremor-content-subtle group-hover:dark:text-dark-tremor-content"
+                      aria-hidden={true}
+                    >
+                      <RiArrowRightUpLine className="h-4 w-4" aria-hidden={true} />
+                    </span>
+                  </div>
+                </Link>
+              </div>
+            </dd>
+          </div>
+        )}
 
         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-gray-900">Riwayat Sertifikat</dt>
@@ -159,6 +214,8 @@ export function SertifikatDetails({
           </div>
         )}
       </dl>
+
+      {userType === "user" && <CreateDokumen details={details} />}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Text } from "@tremor/react";
 import React from "react";
-import { SertifikatList } from "@/modules/sertifikat/sertifikat-list";
+import { SertifikatList } from "@/modules/sertifikat";
 
 export default function SertifikatPage() {
   return (

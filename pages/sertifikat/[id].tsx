@@ -10,9 +10,9 @@ export default function SertifikatDetailsPage() {
 
   const id = router.query.id as string;
 
-  const { data: shipment, isLoading } = useSWR<{ data: SertifikatDetails }>(`/sertifikat/${id}`);
+  const { data: sertifikat, isLoading } = useSWR<{ data: SertifikatDetails }>(`/sertifikat/${id}`);
 
-  if (!shipment && !isLoading) {
+  if (!sertifikat && !isLoading) {
     return <NotFoundPlaceholder description="Maaf, sertifikat yang Anda cari tidak ditemukan." />;
   }
 
@@ -22,7 +22,7 @@ export default function SertifikatDetailsPage() {
       <Text className="mt-0.5">Lihat rincian sertifikat yang terdaftar.</Text>
 
       <div className="mt-4">
-        <SertifikatDetails details={shipment?.data} isLoading={isLoading} />
+        <SertifikatDetails details={sertifikat?.data} isLoading={isLoading} />
       </div>
     </main>
   );

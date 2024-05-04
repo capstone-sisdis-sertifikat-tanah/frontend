@@ -23,7 +23,7 @@ export default function DashboardUser() {
         <Divider />
 
         <div>
-          <Info title="Sertifikat yang terdaftar" />
+          <Info title="Sertifikat Anda" />
           <SertifikatList />
         </div>
       </div>

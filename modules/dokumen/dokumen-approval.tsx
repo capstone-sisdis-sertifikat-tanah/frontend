@@ -4,70 +4,80 @@ import { useUser } from "@/hooks/use-user";
 import { useOptimistic } from "@/hooks/use-optimistic";
 import { Button } from "@tremor/react";
 import { toast } from "sonner";
-import { Dokumen } from "./dokumen-list";
+import { DokumenDetailsResponse, DokumenStatus } from "./types";
 
-export function DokumenApproval({ details }: { details: Dokumen }) {
-  const { trigger, isMutating } = useMutation("/dokumen/complete");
+function getStatus(status: DokumenStatus): DokumenStatus {
+  switch (status) {
+    case "Menunggu Persetujuan Bank":
+      return "Menunggu Persetujuan Notaris";
+    case "Menunggu Persetujuan Notaris":
+      return "Approve";
+    default:
+      return "Approve";
+  }
+}
+
+export function DokumenApproval({ details }: { details: DokumenDetailsResponse }) {
+  const { trigger, isMutating } = useMutation("/dokumen/approve");
 
   const { mutate } = useOptimistic(`/dokumen/${details?.id}`);
 
+  const [isClicked, setIsClicked] = React.useState(false);
+
   const {
-    user: { userType, id },
+    user: { id },
   } = useUser();
 
-  // const isOwner = details.divisiPengirim.id === idDivisi;
-  const isRejected = details.status === "Rejected";
-  const isPending = details.status === "Need Approval" && new Date(details.waktuBerangkat) < new Date();
-  const canApprove = userType === "bank" || userType === "notaris";
-  const isApproved = details.status === "Completed";
+  const isRejected = details.status === "reject";
+  const canApprove = !details.approvers.includes(id) && !isRejected;
+  const isApproved = details.approvers.includes(id);
+
+  if (isRejected) return null;
 
   return (
-    canApprove && (
-      <div className="flex justify-end gap-2">
-        {!isRejected && !isApproved && (
-          <Button
-            loading={isMutating}
-            onClick={async () => {
-              await trigger({
-                id: details.id,
-                status: "Rejected",
-              });
+    <div className="flex justify-end gap-2 bg-white relative pb-6">
+      {!isApproved && (
+        <Button
+          loading={isMutating}
+          onClick={async () => {
+            await trigger({
+              id: details.id,
+              status: "reject",
+            });
 
-              mutate({
-                status: "Rejected",
-              });
+            mutate({
+              status: "reject",
+            });
 
-              toast.success("Anda membatalkan perjalanan.");
-            }}
-            className="rounded-tremor-small bg-red-500 border-red-500 hover:bg-red-600 hover:border-red-600"
-          >
-            Tolak
-          </Button>
-        )}
-        {canApprove && (isPending || isApproved) && (
-          <Button
-            disabled={isApproved}
-            loading={isMutating}
-            onClick={async () => {
-              await trigger({
-                id: details.id,
-                distance: 50,
-                idApprover: id,
-              });
+            toast.success("Pengajuan telah ditolak.");
+          }}
+          className="rounded-tremor-small bg-red-500 border-red-500 hover:bg-red-600 hover:border-red-600"
+        >
+          Tolak
+        </Button>
+      )}
+      <Button
+        className="rounded-tremor-small"
+        disabled={!canApprove || isClicked}
+        loading={isMutating}
+        onClick={async () => {
+          await trigger({
+            id: details.id,
+            status: "approve",
+          });
 
-              mutate({
-                status: "Completed",
-              });
+          toast.success("Pengajuan telah disetujui.");
 
-              toast.success("Anda telah menyelesaikan perjalanan.");
-            }}
-            className="rounded-tremor-small"
-          >
-            {isPending && "Selesaikan Perjalanan"}
-            {isApproved && "Perjalanan Selesai"}
-          </Button>
-        )}
-      </div>
-    )
+          await mutate({
+            approvers: [...details.approvers, id],
+            status: getStatus(details.status),
+          });
+
+          setIsClicked(true);
+        }}
+      >
+        {isApproved ? "Pengajuan telah disetujui" : "Setujui"}
+      </Button>
+    </div>
   );
 }
