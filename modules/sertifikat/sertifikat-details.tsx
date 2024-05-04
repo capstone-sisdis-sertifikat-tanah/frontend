@@ -1,24 +1,52 @@
 import React from "react";
-import { LoadingDetailsPlaceholder } from "../template/loading-details-placeholder";
-import { Sertifikat, statuses, statusText } from "./sertifikat-list";
-import { getReadableDateTime } from "@/lib";
+import { LoadingDetailsPlaceholder } from "@/modules/template";
+import { statuses } from "./sertifikat-list";
 import clsx from "clsx";
 import { RiAttachment2 } from "@remixicon/react";
 import { Steps } from "@/components/steps";
-import { SertifikatPDF } from "./sertifikat-pdf";
-import { useUser } from "@/hooks/use-user";
+import dynamic from "next/dynamic";
 
-function getSteps(details: Sertifikat) {
-  const isWaitingBerangkat = new Date(details?.waktuBerangkat) > new Date() && details?.status === "Need Approval";
+const ReadOnlyMap = dynamic(() => import("@/components/map/read-only-map"), {
+  ssr: false,
+});
+
+export type SertifikatDetails = {
+  id: string;
+  idPemilik: string;
+  akta: {
+    id: string;
+    idDokumen: string;
+    status: "Approve" | "Menunggu Persetujuan";
+    idPembeli: string;
+    idPenjual: string;
+    approvers: Array<string>;
+    lat: string;
+    long: string;
+    TxId: Array<string>;
+  };
+  lat: string;
+  long: string;
+  lokasi: string;
+};
+
+function getStatus(details: SertifikatDetails) {
+  const isAktaEmpty = !details.akta;
+
+  if (isAktaEmpty) {
+    return "pending";
+  }
+
+  return "valid";
+}
+
+function getSteps(details: SertifikatDetails) {
+  const status = getStatus(details);
 
   const steps = [
     {
-      name: "Perjalanan dibuat",
+      name: "Tanah didaftarkan oleh pemilik",
       description: (
-        <span>
-          {/* Perjalanan <b>{details.id}</b> menuju divisi <b>{details.divisiPenerima.name}</b> akan berangkat pada{" "} */}
-          <b>{getReadableDateTime(details?.waktuBerangkat)}</b>
-        </span>
+        <span>Tanah baru berhasil didaftarkan oleh pemilik. Belum terdaftar perpindahan sertifikat terkait.</span>
       ),
       status: "complete",
     },
@@ -28,37 +56,18 @@ function getSteps(details: Sertifikat) {
     status: "complete" | "current" | "upcoming";
   }[];
 
-  switch (details?.status) {
-    case "Rejected":
-      if (!isWaitingBerangkat) {
-        steps.push({
-          name: "Perjalanan sedang berlangsung",
-          description: <span>{/* Perjalanan sedang menuju divisi <b>{details.divisiPenerima.name}</b> */}</span>,
-          status: "complete",
-        });
-      }
-
-      steps.push({
-        name: "Perjalanan dibatalkan",
-        description: (
-          <span>
-            {/* Perjalanan menuju divisi <b>{details.divisiPenerima.name}</b> telah dibatalkan oleh divisi{" "} */}
-            {/* <b>{details.divisiPengirim.name}</b> */}
-          </span>
-        ),
-        status: "complete",
-      });
-
+  switch (status) {
+    case "pending":
       return steps;
 
-    case "Completed":
+    case "valid":
       steps.push({
-        name: "Perjalanan sedang berlangsung",
+        name: "Sertifikat sedang berlangsung",
         description: <span>{/* Perjalanan sedang menuju divisi <b>{details.divisiPenerima.name}</b> */}</span>,
         status: "complete",
       });
       steps.push({
-        name: "Perjalanan selesai",
+        name: "Sertifikat selesai",
         description: (
           <span>
             Perjalanan <b>{details.id}</b> telah selesai. Anda bisa melihat sertifikat perjalanan di bagian bawah
@@ -69,46 +78,25 @@ function getSteps(details: Sertifikat) {
       });
       return steps;
 
-    case "Need Approval":
-      if (!isWaitingBerangkat) {
-        steps.push({
-          name: "Perjalanan sedang berlangsung",
-          description: <span>{/* Perjalanan sedang menuju divisi <b>{details.divisiPenerima.name}</b> */}</span>,
-          status: "current",
-        });
-      } else {
-        steps.push({
-          name: "Perjalanan sedang menunggu waktu berangkat",
-          description: (
-            <span>
-              {/* Perjalanan akan menuju divisi <b>{details.divisiPenerima.name}</b> pada{" "} */}
-              <b>{getReadableDateTime(details?.waktuBerangkat)}</b>
-            </span>
-          ),
-          status: "current",
-        });
-      }
-
-      return steps;
-
     default:
       return steps;
   }
 }
 
-export function SertifikatDetails({ details, isLoading }: { details: Sertifikat | undefined; isLoading: boolean }) {
-  const { user } = useUser();
-
+export function SertifikatDetails({
+  details,
+  isLoading,
+}: {
+  details: SertifikatDetails | undefined;
+  isLoading: boolean;
+}) {
   if (isLoading) {
     return <LoadingDetailsPlaceholder />;
   }
 
   if (!details) return null;
 
-  const isWaitingBerangkat = new Date(details?.waktuBerangkat) > new Date() && details?.status === "Need Approval";
-
-  const isCanceled = details?.status === "Rejected";
-  const isApproved = details?.status === "Completed";
+  const isAktaEmpty = !details.akta;
 
   return (
     <div>
@@ -119,38 +107,40 @@ export function SertifikatDetails({ details, isLoading }: { details: Sertifikat 
             <div className="py-2">
               <p
                 className={clsx(
-                  statuses[details?.status],
+                  isAktaEmpty ? statuses["pending"] : statuses["valid"],
                   "rounded-md w-fit mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
                 )}
               >
-                {isWaitingBerangkat ? "Menunggu Waktu Berangkat" : statusText[details?.status]}
+                {isAktaEmpty ? "Sertifikat Baru" : "Sertifikat Valid"}
               </p>
             </div>
           </dd>
         </div>
 
         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-gray-900">Riwayat Perjalanan</dt>
+          <dt className="text-sm font-medium leading-6 text-gray-900">Riwayat Sertifikat</dt>
           <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-            <Steps steps={getSteps(details)} isCanceled={isCanceled} />
+            <Steps steps={getSteps(details)} />
           </dd>
         </div>
 
-        {details?.waktuSampai && (
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Waktu Sampai</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {getReadableDateTime(details?.waktuSampai)}
-            </dd>
-          </div>
-        )}
-
         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-gray-900">Berat Muatan</dt>
-          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{details?.beratMuatan} kg</dd>
+          <dt className="text-sm font-medium leading-6 text-gray-900">Alamat Lengkap</dt>
+          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <div className="sm:w-3/4">{details.lokasi}</div>
+
+            <div className="mt-4">
+              <ReadOnlyMap
+                markerPosition={{
+                  lat: parseFloat(details.lat),
+                  lng: parseFloat(details.long),
+                }}
+              />
+            </div>
+          </dd>
         </div>
 
-        {isApproved && (
+        {!isAktaEmpty && (
           <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Sertifikat Tanah</dt>
             <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
@@ -162,9 +152,7 @@ export function SertifikatDetails({ details, isLoading }: { details: Sertifikat 
                       <span className="truncate font-medium">sertifikat-tanah.pdf</span>
                     </div>
                   </div>
-                  <div className="ml-4 flex-shrink-0">
-                    <SertifikatPDF identifier={details.id} />
-                  </div>
+                  <div className="ml-4 flex-shrink-0">{/* <SertifikatPDF identifier={details.id} /> */}</div>
                 </li>
               </ul>
             </dd>

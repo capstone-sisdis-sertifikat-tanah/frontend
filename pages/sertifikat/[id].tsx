@@ -1,17 +1,16 @@
 import { Text } from "@tremor/react";
-import { NotFoundPlaceholder } from "@/modules/template/not-found";
+import { NotFoundPlaceholder } from "@/modules/template";
 import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
-import { SertifikatDetails } from "@/modules/sertifikat/sertifikat-details";
-import { Sertifikat } from "@/modules/sertifikat/sertifikat-list";
+import { SertifikatDetails } from "@/modules/sertifikat";
 
 export default function SertifikatDetailsPage() {
   const router = useRouter();
 
   const id = router.query.id as string;
 
-  const { data: shipment, isLoading } = useSWR<{ data: Sertifikat }>(`/sertifikat/${id}`);
+  const { data: shipment, isLoading } = useSWR<{ data: SertifikatDetails }>(`/sertifikat/${id}`);
 
   if (!shipment && !isLoading) {
     return <NotFoundPlaceholder description="Maaf, sertifikat yang Anda cari tidak ditemukan." />;

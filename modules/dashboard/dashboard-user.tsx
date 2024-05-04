@@ -1,45 +1,31 @@
 import React from "react";
-import { useUser } from "@/hooks/use-user";
-import useSWR from "swr";
-import { Text } from "@tremor/react";
+import { Divider, Text } from "@tremor/react";
 import { Info } from "@/components/info";
-import { Tabs } from "@/components/tabs";
+import { SertifikatList, DaftarkanTanah } from "@/modules/sertifikat";
+
+const info = {
+  title: "Buat Sertifikat Tanah",
+  description: "Daftarkan sertifikat tanah yang Anda miliki ke dalam sistem.",
+};
 
 export default function DashboardUser() {
-  const {
-    user: { username },
-  } = useUser();
-
   return (
     <main>
-      <h1 className="text-tremor-title font-semibold">Rincian Divisi</h1>
-      <Text className="mt-0.5">Informasi umum, kendaraan, dan riwayat perjalanan divisi terkait.</Text>
+      <h1 className="text-tremor-title font-semibold">Manajemen Sertifikat</h1>
+      <Text className="mt-0.5">Kelola sertifikat tanah Anda yang terdaftar di dalam sistem.</Text>
 
-      <div className="mt-4">
-        {/* <Tabs
-          tabList={["Rincian", "Kendaraan", "Riwayat Perjalanan"]}
-          tabPanels={[
-            () => <DivisionDetailsManager details={division?.data} isLoading={isLoading} />,
-            () => <VehicleListReadOnly idDivisi={idDivisi} />,
-            () => (
-              <div key="perjalanan" className="mt-4">
-                <Info
-                  title="Perjalanan yang tercatat"
-                  description="Perjalanan adalah pengiriman barang antar divisi internal atau perusahaan lain."
-                />
-                <Tabs
-                  className="mt-2"
-                  prefix="shipment"
-                  tabList={["Menuju", "Mendatang"]}
-                  tabPanels={[
-                    () => <ShipmentListReadOnly idDivisi={idDivisi} type="divisi_pengirim" />,
-                    () => <ShipmentListReadOnly idDivisi={idDivisi} type="divisi_penerima" />,
-                  ]}
-                />
-              </div>
-            ),
-          ]}
-        /> */}
+      <div className="mt-8 space-y-8">
+        <div>
+          <Info {...info} />
+          <DaftarkanTanah />
+        </div>
+
+        <Divider />
+
+        <div>
+          <Info title="Sertifikat yang terdaftar" />
+          <SertifikatList />
+        </div>
       </div>
     </main>
   );

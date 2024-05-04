@@ -6,7 +6,7 @@ export default function AktaTanahPage() {
   return (
     <main>
       <h1 className="text-tremor-title font-semibold">Manajemen Akta Tanah</h1>
-      <Text className="mt-0.5">Kelola akta tanah yang terdaftar di dalam sistem.</Text>
+      <Text className="mt-0.5">Kelola akta tanah Anda yang terdaftar di dalam sistem.</Text>
 
       <AktaTanahList />
     </main>

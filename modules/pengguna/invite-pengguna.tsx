@@ -17,7 +17,7 @@ export function InviteUser() {
 
   const { trigger, isMutating } = useMutation<InviteUserPayload>("/auth/user/register");
 
-  const { mutate } = useOptimisticList("/auth/list/users");
+  const { mutate } = useOptimisticList("/auth/list/all-roles");
 
   const onSubmit = async (payload: InviteUserPayload) => {
     try {
@@ -29,6 +29,7 @@ export function InviteUser() {
       await mutate({
         name: payload.username,
         email: payload.email,
+        role: payload.role,
       });
     } catch (error) {}
   };
@@ -49,7 +50,10 @@ export function InviteUser() {
               <Select {...field} placeholder="Pilih tipe pengguna" className="w-full rounded-tremor-small" required>
                 {["Penjual/Pembeli", "Bank", "Notaris"].map((type) => {
                   return (
-                    <SelectItem key={type} value={type.toLowerCase()}>
+                    <SelectItem
+                      key={type}
+                      value={type.toLowerCase() === "penjual/pembeli" ? "user" : type.toLowerCase()}
+                    >
                       {type}
                     </SelectItem>
                   );
