@@ -19,6 +19,8 @@
     "@tremor/react": "^3.15.0",
     "axios": "^1.6.8",
     "clsx": "^2.1.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "leaflet": "^1.9.3",
     "leaflet-geosearch": "^3.8.0",
     "leaflet-routing-machine": "^3.2.12",

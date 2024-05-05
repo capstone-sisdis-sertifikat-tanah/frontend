@@ -119,7 +119,7 @@ export function AktaTanahDetails({
   isLoading: boolean;
 }) {
   const {
-    user: { id, userType },
+    user: { userType },
   } = useUser();
 
   const router = useRouter();

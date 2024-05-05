@@ -85,8 +85,7 @@ export function VerifikasiSertifikat() {
                     return;
                   }
 
-                  // const identifier = metaData?.info?.Title;
-                  const identifier = "0df11065971bfd35fa5e2bf269e3f66755897035c66a89056754bb6827f6b56cw";
+                  const identifier = metaData?.info?.Title;
                   if (!identifier) {
                     toast.error("Tidak dapat menemukan identifier pada file PDF. Mohon unggah file yang valid.");
                     return;
