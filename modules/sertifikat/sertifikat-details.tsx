@@ -6,8 +6,9 @@ import { RiArrowRightUpLine, RiArticleLine, RiAttachment2 } from "@remixicon/rea
 import { Steps } from "@/components/steps";
 import dynamic from "next/dynamic";
 import { useUser } from "@/hooks/use-user";
-import { CreateDokumen } from "../dokumen/create-dokumen";
+import { CreateDokumen } from "@/modules/dokumen";
 import Link from "next/link";
+import { AktaTanahStatus, statuses as aktaTanahStatuses, statusText } from "@/modules/akta-tanah";
 
 const ReadOnlyMap = dynamic(() => import("@/components/map/read-only-map"), {
   ssr: false,
@@ -18,7 +19,7 @@ export type SertifikatDetails = {
   akta: {
     id: string;
     idDokumen: string;
-    status: "Approve" | "Menunggu Persetujuan";
+    status: AktaTanahStatus;
     idPembeli: string;
     idPenjual: string;
     approvers: Array<string>;
@@ -70,16 +71,21 @@ function getSteps(details: SertifikatDetails) {
 
     case "valid":
       steps.push({
-        name: "Sertifikat sedang berlangsung",
-        description: <span>{/* Perjalanan sedang menuju divisi <b>{details.divisiPenerima.name}</b> */}</span>,
+        name: "Menunggu pengajuan pembelian tanah",
+        description: (
+          <span>
+            Sertifikat tanah belum memiliki riwayat perpindahan. Menunggu pengajuan pembelian tanah dan persetujuan akta
+            tanah.
+          </span>
+        ),
         status: "complete",
       });
       steps.push({
-        name: "Sertifikat selesai",
+        name: "Sertifikat tanah diterbitkan",
         description: (
           <span>
-            Perjalanan <b>{details.id}</b> telah selesai. Anda bisa melihat sertifikat perjalanan di bagian bawah
-            halaman.
+            Sertifikat tanah <b>{details.id}</b> telah diterbitkan. Anda bisa mengunduh sertifikat tanah terkait di
+            bagian bawah halaman.
           </span>
         ),
         status: "complete",
@@ -99,7 +105,7 @@ export function SertifikatDetails({
   isLoading: boolean;
 }) {
   const {
-    user: { userType },
+    user: { id, userType },
   } = useUser();
 
   if (isLoading) {
@@ -109,6 +115,9 @@ export function SertifikatDetails({
   if (!details) return null;
 
   const isAktaEmpty = !details.akta;
+
+  const isOwner = details.pemilik.id === id;
+  const canDownload = isOwner || userType === "admin-bpn";
 
   return (
     <div>
@@ -123,7 +132,7 @@ export function SertifikatDetails({
                   "rounded-md w-fit mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
                 )}
               >
-                {isAktaEmpty ? "Sertifikat Baru" : "Sertifikat Valid"}
+                {isAktaEmpty ? "Tanah Baru" : "Sertifikat Valid"}
               </p>
             </div>
           </dd>
@@ -147,16 +156,16 @@ export function SertifikatDetails({
                   <div className="group px-4 py-5">
                     <div className="w-full flex items-center min-w-0 gap-x-4">
                       <RiArticleLine className="shrink-0 w-10 h-10 text-gray-500" />
-                      <div>
-                        <p className="text-sm font-semibold leading-6 text-gray-900">{details.akta.id}</p>
-                        {/* <p
+                      <div className="w-full pr-6">
+                        <p className="text-xs leading-6 text-gray-900">{details.akta.id}</p>
+                        <p
                           className={clsx(
-                            statuses[details.akta.status],
+                            aktaTanahStatuses[details.akta.status],
                             "rounded-md w-fit mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
                           )}
                         >
                           {statusText[details.akta.status]}
-                        </p> */}
+                        </p>
                       </div>
                     </div>
                     <span
@@ -195,7 +204,7 @@ export function SertifikatDetails({
           </dd>
         </div>
 
-        {!isAktaEmpty && (
+        {!isAktaEmpty && canDownload && (
           <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Sertifikat Tanah</dt>
             <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">

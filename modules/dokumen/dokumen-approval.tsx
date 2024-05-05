@@ -25,14 +25,18 @@ export function DokumenApproval({ details }: { details: DokumenDetailsResponse }
   const [isClicked, setIsClicked] = React.useState(false);
 
   const {
-    user: { id },
+    user: { id, userType },
   } = useUser();
 
+  const isTurnToApprove =
+    (details.status === "Menunggu Persetujuan Bank" && userType === "bank") ||
+    (details.status === "Menunggu Persetujuan Notaris" && userType === "notaris");
+
   const isRejected = details.status === "reject";
-  const canApprove = !details.approvers.includes(id) && !isRejected;
+  const canApprove = !details.approvers.includes(id) && !isRejected && isTurnToApprove;
   const isApproved = details.approvers.includes(id);
 
-  if (isRejected) return null;
+  if (isRejected || isApproved || !canApprove) return null;
 
   return (
     <div className="flex justify-end gap-2 bg-white relative pb-6">
@@ -76,7 +80,7 @@ export function DokumenApproval({ details }: { details: DokumenDetailsResponse }
           setIsClicked(true);
         }}
       >
-        {isApproved ? "Pengajuan telah disetujui" : "Setujui"}
+        Setujui
       </Button>
     </div>
   );

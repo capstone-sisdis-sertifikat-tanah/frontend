@@ -32,8 +32,10 @@ export const statusText = {
   Rejected: "Perjalanan Dibatalkan",
 };
 
-export function SertifikatList() {
-  const { data, isLoading } = useSWR<{ data: Array<Sertifikat> }>("/sertifikat/pemilik");
+export function SertifikatList({ type }: { type: "pemilik" | "all" }) {
+  const { data, isLoading } = useSWR<{ data: Array<Sertifikat> }>(
+    type === "pemilik" ? "/sertifikat/pemilik" : "/sertifikat"
+  );
 
   if (isLoading) {
     return <LoadingPlaceholder />;
@@ -72,7 +74,7 @@ export function SertifikatList() {
                       "rounded-md w-fit mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
                     )}
                   >
-                    {isAktaEmpty ? "Sertifikat Baru" : "Sertifikat Valid"}
+                    {isAktaEmpty ? "Tanah Baru" : "Sertifikat Valid"}
                   </p>
                 </div>
               </div>

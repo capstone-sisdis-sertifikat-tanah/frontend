@@ -23,6 +23,9 @@ const navigation: {
       ),
       href: "/dashboard",
     },
+    { name: "Pengajuan Jual Beli", href: "/pengajuan" },
+    { name: "Akta Tanah", href: "/akta-tanah" },
+    { name: "Sertifikat Tanah", href: "/sertifikat" },
   ],
   bank: [
     {
@@ -34,7 +37,6 @@ const navigation: {
       ),
       href: "/dashboard",
     },
-    { name: "Pengajuan Jual Beli", href: "/pengajuan" },
   ],
   notaris: [
     {
@@ -46,7 +48,6 @@ const navigation: {
       ),
       href: "/dashboard",
     },
-    { name: "Pengajuan Jual Beli", href: "/pengajuan" },
   ],
   user: [
     {
@@ -58,8 +59,8 @@ const navigation: {
       ),
       href: "/dashboard",
     },
-    { name: "Akta Tanah", href: "/akta-tanah" },
     { name: "Pengajuan Jual Beli", href: "/pengajuan" },
+    { name: "Akta Tanah", href: "/akta-tanah" },
   ],
 };
 

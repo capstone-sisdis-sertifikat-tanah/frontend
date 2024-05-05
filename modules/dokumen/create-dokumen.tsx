@@ -7,6 +7,7 @@ import { useUser } from "@/hooks/use-user";
 import { useOptimisticList } from "@/hooks/use-optimistic";
 import { Dokumen } from ".";
 import useSWR from "swr";
+import { AktaTanah } from "../akta-tanah";
 
 export function CreateDokumen({ details }: { details: SertifikatDetails }) {
   const {
@@ -14,16 +15,27 @@ export function CreateDokumen({ details }: { details: SertifikatDetails }) {
   } = useUser();
   const { mutate } = useOptimisticList(`/dokumen/pembeli/${id}`);
 
-  const { data, isLoading } = useSWR<{ data: Array<Dokumen> }>(`/dokumen/pembeli/${id}`);
+  const { data: dokumen, isLoading } = useSWR<{ data: Array<Dokumen> }>(`/dokumen/pembeli/${id}`);
+  const { data: akta, isLoading: isLoadingAkta } = useSWR<{ data: Array<AktaTanah> }>(`/akta/pembeli/${id}`);
+
   const [isClicked, setIsClicked] = React.useState(false);
 
   const { trigger, isMutating } = useMutation("/dokumen");
 
-  const hasDiajukan = data?.data.some(
-    (dokumen) =>
-      dokumen.idSertifikat === details.id &&
-      ["Menunggu Persetujuan Bank", "Menunggu Persetujuan Notaris"].includes(dokumen.status)
-  );
+  const hasDiajukan =
+    dokumen?.data.some(
+      (dok) =>
+        dok.idSertifikat === details.id &&
+        ["Menunggu Persetujuan Bank", "Menunggu Persetujuan Notaris"].includes(dok.status)
+    ) ||
+    akta?.data.some((akta) =>
+      dokumen?.data.some(
+        (dok) =>
+          dok.idSertifikat === details.id &&
+          dok.id === akta.idDokumen &&
+          ["Menunggu Persetujuan Pembeli", "Menunggu Persetujuan Penjual"].includes(akta.status)
+      )
+    );
 
   const isOwner = details.pemilik.id === id;
 
@@ -33,7 +45,7 @@ export function CreateDokumen({ details }: { details: SertifikatDetails }) {
     <div className="flex justify-end gap-2 bg-white relative pb-6">
       <Button
         className="rounded-tremor-small"
-        disabled={isLoading || hasDiajukan || isClicked}
+        disabled={isLoading || isLoadingAkta || hasDiajukan || isClicked}
         loading={isMutating}
         onClick={async () => {
           const result = await trigger({

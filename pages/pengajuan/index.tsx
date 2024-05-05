@@ -17,16 +17,19 @@ export default function PengajuanJualBeliPage() {
   const {
     user: { userType },
   } = useUser();
+
+  const isUserOrBPN = userType === "user" || userType === "admin-bpn";
+  const isUser = userType === "user";
   return (
     <main>
       <h1 className="text-tremor-title font-semibold">Manajemen Pengajuan Jual Beli</h1>
       <Text className="mt-0.5">Kelola pengajuan jual beli tanah yang terdaftar di dalam sistem.</Text>
 
-      <div className={clsx(userType === "user" ? "mt-8 space-y-8" : "mt-4")}>
-        {userType === "user" && (
+      <div className={clsx(isUser ? "mt-8 space-y-8" : "mt-4")}>
+        {isUserOrBPN && (
           <>
             <div>
-              <Info {...info} />
+              {isUser && <Info {...info} />}
               <Button onClick={() => router.push("/tanah")} type="button" className="mt-2 rounded-tremor-small">
                 Lihat tanah yang terdaftar
               </Button>
@@ -37,15 +40,19 @@ export default function PengajuanJualBeliPage() {
         )}
 
         <div>
-          {userType === "user" && (
+          {isUserOrBPN && (
             <>
               {" "}
               <Info title="Pengajuan pembelian/penjualan yang terdaftar" />
-              <Tabs
-                className="mt-2"
-                tabList={["Sebagai Pembeli", "Sebagai Penjual"]}
-                tabPanels={[() => <DokumenList type="pembeli" />, () => <DokumenList type="penjual" />]}
-              />
+              {isUser ? (
+                <Tabs
+                  className="mt-2"
+                  tabList={["Sebagai Pembeli", "Sebagai Penjual"]}
+                  tabPanels={[() => <DokumenList type="pembeli" />, () => <DokumenList type="penjual" />]}
+                />
+              ) : (
+                <DokumenList type="all" />
+              )}
             </>
           )}
 

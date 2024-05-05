@@ -3,3 +3,4 @@ export * from "./dokumen-approval";
 export * from "./dokumen-list";
 export * from "./dokumen-pdf";
 export * from "./create-dokumen";
+export * from "./types";

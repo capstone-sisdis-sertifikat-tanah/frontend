@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
 import { AktaTanahDetails } from "@/modules/akta-tanah/akta-tanah-details";
-import { AktaTanah } from "@/modules/akta-tanah/akta-tanah-list";
+import { AktaTanahResponse } from "@/modules/akta-tanah";
 
 export default function AktaTanahDetailsPage() {
   const router = useRouter();
 
   const id = router.query.id as string;
 
-  const { data: shipment, isLoading } = useSWR<{ data: AktaTanah }>(`/akta/${id}`);
+  const { data: aktaTanah, isLoading } = useSWR<{ data: AktaTanahResponse }>(`/akta/${id}`);
 
-  if (!shipment && !isLoading) {
+  if (!aktaTanah && !isLoading) {
     return <NotFoundPlaceholder description="Maaf, akta tanah yang Anda cari tidak ditemukan." />;
   }
 
@@ -23,7 +23,7 @@ export default function AktaTanahDetailsPage() {
       <Text className="mt-0.5">Lihat rincian akta tanah yang terdaftar.</Text>
 
       <div className="mt-4">
-        <AktaTanahDetails details={shipment?.data} isLoading={isLoading} />
+        <AktaTanahDetails details={aktaTanah?.data} isLoading={isLoading} />
       </div>
     </main>
   );

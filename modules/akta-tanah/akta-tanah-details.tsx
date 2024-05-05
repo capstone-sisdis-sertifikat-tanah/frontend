@@ -1,24 +1,26 @@
 import React from "react";
-import { LoadingDetailsPlaceholder } from "../template/loading-details-placeholder";
-import { AktaTanah, statuses, statusText } from "./akta-tanah-list";
-import { getReadableDateTime } from "@/lib";
+import { LoadingDetailsPlaceholder } from "@/modules/template";
+import { statuses, statusText } from "./akta-tanah-list";
 import clsx from "clsx";
-import { AktaTanahApproval } from "./akta-tanah-approval";
-import { RiAttachment2 } from "@remixicon/react";
 import { Steps } from "@/components/steps";
-import { AktaTanahPDF } from "./akta-tanah-pdf";
+import { AktaTanahResponse } from "./types";
+import { Avatar } from "@/components/avatar";
 import { useUser } from "@/hooks/use-user";
+import { AktaTanahApproval } from "./akta-tanah-approval";
+import { Button } from "@tremor/react";
+import { useRouter } from "next/navigation";
 
-function getSteps(details: AktaTanah) {
-  const isWaitingBerangkat = new Date(details?.waktuBerangkat) > new Date() && details?.status === "Need Approval";
-
+function getSteps(details: AktaTanahResponse) {
   const steps = [
     {
-      name: "Perjalanan dibuat",
+      name: "Pengajuan pembelian tanah telah disetujui",
       description: (
         <span>
-          {/* Perjalanan <b>{details.id}</b> menuju divisi <b>{details.divisiPenerima.name}</b> akan berangkat pada{" "} */}
-          <b>{getReadableDateTime(details?.waktuBerangkat)}</b>
+          Pengajuan{" "}
+          <a target="_blank" className="hover:underline text-tremor-brand" href={`/pengajuan/${details.dokumen.id}`}>
+            {details.dokumen.id}
+          </a>{" "}
+          untuk pembelian tanah telah disetujui oleh bank dan notaris.
         </span>
       ),
       status: "complete",
@@ -29,67 +31,79 @@ function getSteps(details: AktaTanah) {
     status: "complete" | "current" | "upcoming";
   }[];
 
-  switch (details?.status) {
-    case "Rejected":
-      if (!isWaitingBerangkat) {
-        steps.push({
-          name: "Perjalanan sedang berlangsung",
-          description: <span>{/* Perjalanan sedang menuju divisi <b>{details.divisiPenerima.name}</b> */}</span>,
-          status: "complete",
-        });
-      }
-
+  switch (details.status) {
+    case "Menunggu Persetujuan Penjual":
       steps.push({
-        name: "Perjalanan dibatalkan",
+        name: "Menunggu Persetujuan Penjual",
+        description: <span>Menunggu persetujuan dari Penjual. Penjual akan memeriksa akta tanah terkait.</span>,
+        status: "current",
+      });
+      return steps;
+
+    case "Menunggu Persetujuan Pembeli":
+      steps.push({
+        name: "Akta tanah telah disetujui oleh Penjual",
+        description: <span>Akta tanah telah disetujui oleh Penjual. Pembeli akan memeriksa akta tanah terkait.</span>,
+        status: "complete",
+      });
+      steps.push({
+        name: "Menunggu Persetujuan Pembeli",
+        description: <span>Menunggu persetujuan dari Pembeli. Pembeli akan memeriksa akta tanah terkait.</span>,
+        status: "current",
+      });
+      return steps;
+
+    case "reject":
+      steps.push({
+        name: "Akta tanah ditolak",
         description: (
           <span>
-            {/* Perjalanan menuju divisi <b>{details.divisiPenerima.name}</b> telah dibatalkan oleh divisi{" "} */}
-            {/* <b>{details.divisiPengirim.name}</b> */}
+            Akta tanah dengan sertifikat tanah{" "}
+            <a
+              target="_blank"
+              className="hover:underline text-tremor-brand"
+              href={`/sertifikat/${details.dokumen.idSertifikat}`}
+            >
+              {details.dokumen.idSertifikat}
+            </a>{" "}
+            telah ditolak oleh Penjual atau Pembeli.
           </span>
         ),
         status: "complete",
       });
-
       return steps;
 
-    case "Completed":
+    case "Approve":
       steps.push({
-        name: "Perjalanan sedang berlangsung",
-        description: <span>{/* Perjalanan sedang menuju divisi <b>{details.divisiPenerima.name}</b> */}</span>,
+        name: "Akta tanah telah disetujui oleh Penjual",
+        description: <span>Akta tanah telah disetujui oleh Penjual. Pembeli akan memeriksa akta tanah terkait.</span>,
         status: "complete",
       });
       steps.push({
-        name: "Perjalanan selesai",
+        name: "Akta tanah telah disetujui oleh Pembeli",
+        description: (
+          <span>Akta tanah telah disetujui oleh Pembeli. Sertifikat tanah terkait akan diterbitkan oleh sistem.</span>
+        ),
+        status: "complete",
+      });
+      steps.push({
+        name: "Akta tanah telah disetujui",
         description: (
           <span>
-            Perjalanan <b>{details.id}</b> telah selesai. Anda bisa melihat sertifikat perjalanan di bagian bawah
-            halaman.
+            Akta tanah dengan sertifikat tanah{" "}
+            <a
+              target="_blank"
+              className="hover:underline text-tremor-brand"
+              href={`/sertifikat/${details.dokumen.idSertifikat}`}
+            >
+              {details.dokumen.idSertifikat}
+            </a>{" "}
+            telah disetujui oleh Penjual dan Pembeli. Silahkan kunjungi halaman sertifikat tanah untuk melihat detail
+            lebih lanjut.
           </span>
         ),
         status: "complete",
       });
-      return steps;
-
-    case "Need Approval":
-      if (!isWaitingBerangkat) {
-        steps.push({
-          name: "Perjalanan sedang berlangsung",
-          description: <span>{/* Perjalanan sedang menuju divisi <b>{details.divisiPenerima.name}</b> */}</span>,
-          status: "current",
-        });
-      } else {
-        steps.push({
-          name: "Perjalanan sedang menunggu waktu berangkat",
-          description: (
-            <span>
-              {/* Perjalanan akan menuju divisi <b>{details.divisiPenerima.name}</b> pada{" "} */}
-              <b>{getReadableDateTime(details?.waktuBerangkat)}</b>
-            </span>
-          ),
-          status: "current",
-        });
-      }
-
       return steps;
 
     default:
@@ -97,8 +111,18 @@ function getSteps(details: AktaTanah) {
   }
 }
 
-export function AktaTanahDetails({ details, isLoading }: { details: AktaTanah | undefined; isLoading: boolean }) {
-  const { user } = useUser();
+export function AktaTanahDetails({
+  details,
+  isLoading,
+}: {
+  details: AktaTanahResponse | undefined;
+  isLoading: boolean;
+}) {
+  const {
+    user: { id, userType },
+  } = useUser();
+
+  const router = useRouter();
 
   if (isLoading) {
     return <LoadingDetailsPlaceholder />;
@@ -106,10 +130,9 @@ export function AktaTanahDetails({ details, isLoading }: { details: AktaTanah | 
 
   if (!details) return null;
 
-  const isWaitingBerangkat = new Date(details?.waktuBerangkat) > new Date() && details?.status === "Need Approval";
+  const isRejected = details.status === "reject";
 
-  const isCanceled = details?.status === "Rejected";
-  const isApproved = details?.status === "Completed";
+  const idSertifikat = details.dokumen.idSertifikat;
 
   return (
     <div>
@@ -120,60 +143,72 @@ export function AktaTanahDetails({ details, isLoading }: { details: AktaTanah | 
             <div className="py-2">
               <p
                 className={clsx(
-                  statuses[details?.status],
+                  statuses[details.status],
                   "rounded-md w-fit mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
                 )}
               >
-                {isWaitingBerangkat ? "Menunggu Waktu Berangkat" : statusText[details?.status]}
+                {statusText[details.status]}
               </p>
             </div>
           </dd>
         </div>
 
         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-gray-900">Riwayat Perjalanan</dt>
+          <dt className="text-sm font-medium leading-6 text-gray-900">Riwayat Akta Tanah</dt>
           <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-            <Steps steps={getSteps(details)} isCanceled={isCanceled} />
+            <Steps steps={getSteps(details)} isCanceled={isRejected} />
           </dd>
         </div>
 
-        {details?.waktuSampai && (
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Waktu Sampai</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {getReadableDateTime(details?.waktuSampai)}
-            </dd>
-          </div>
-        )}
-
         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-gray-900">Berat Muatan</dt>
-          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{details?.beratMuatan} kg</dd>
-        </div>
+          <dt className="text-sm font-medium leading-6 text-gray-900">Pihak yang terlibat</dt>
+          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            <ul role="list" className="mt-4 grid sm:grid-cols-2 gap-4">
+              {[details.pembeli, details.penjual].map((person, i) => (
+                <li key={person.email} className="flex justify-between gap-x-6 p-5 border shadow-sm rounded-md">
+                  <div className="flex gap-x-4 w-full">
+                    <Avatar />
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold leading-6 text-gray-900">{person.name}</p>
+                      <p className="flex text-xs leading-5 text-gray-500">
+                        <a href={`mailto:${person.email}`} className="truncate hover:underline">
+                          {person.email}
+                        </a>
+                      </p>
 
-        {isApproved && (
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">AktaTanah Tanah</dt>
-            <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-              <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
-                <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
-                  <div className="flex w-0 flex-1 items-center">
-                    <RiAttachment2 className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                    <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                      <span className="truncate font-medium">aktaTanah-tanah.pdf</span>
+                      <div className="mt-2 flex justify-end">
+                        <div
+                          className={clsx(
+                            "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
+                            i === 0
+                              ? "bg-orange-50 text-orange-700 ring-orange-700/10"
+                              : "bg-green-50 text-green-700 ring-green-700/10"
+                          )}
+                        >
+                          {i === 0 ? "Pembeli" : "Penjual"}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="ml-4 flex-shrink-0">
-                    <AktaTanahPDF identifier={details.id} />
-                  </div>
                 </li>
-              </ul>
-            </dd>
-          </div>
-        )}
+              ))}
+            </ul>
+          </dd>
+        </div>
       </dl>
 
-      {user && <AktaTanahApproval details={details} />}
+      {userType === "user" && <AktaTanahApproval details={details} />}
+      {userType === "user" && details.status === "Approve" && (
+        <div className="flex justify-end">
+          <Button
+            onClick={() => router.push(`/sertifikat/${idSertifikat}`)}
+            variant="secondary"
+            className="rounded-tremor-small"
+          >
+            Lihat Sertifikat Tanah
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

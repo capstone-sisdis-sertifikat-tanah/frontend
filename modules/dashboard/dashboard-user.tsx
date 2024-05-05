@@ -24,7 +24,7 @@ export default function DashboardUser() {
 
         <div>
           <Info title="Sertifikat Anda" />
-          <SertifikatList />
+          <SertifikatList type="pemilik" />
         </div>
       </div>
     </main>

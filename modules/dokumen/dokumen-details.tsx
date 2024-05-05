@@ -7,6 +7,10 @@ import { DokumenDetailsResponse } from "./types";
 import { Avatar } from "@/components/avatar";
 import { useUser } from "@/hooks/use-user";
 import { DokumenApproval } from "./dokumen-approval";
+import { Button } from "@tremor/react";
+import { useRouter } from "next/navigation";
+import useSWR from "swr";
+import { AktaTanah } from "../akta-tanah/akta-tanah-list";
 
 function getSteps(details: DokumenDetailsResponse) {
   const steps = [
@@ -117,7 +121,7 @@ function getSteps(details: DokumenDetailsResponse) {
             >
               {details.sertifikat.id}
             </a>{" "}
-            telah disetujui oleh Bank dan Notaris. Pembeli dan penjual dapat melanjutkan proses persetujuan akta tanah.
+            telah disetujui oleh Bank dan Notaris. Pembeli dan Penjual dapat melanjutkan proses persetujuan akta tanah.
           </span>
         ),
         status: "complete",
@@ -139,6 +143,15 @@ export function DokumenDetails({
   const {
     user: { id, userType },
   } = useUser();
+
+  const router = useRouter();
+
+  const { data: aktaListByPembeli } = useSWR<{ data: Array<AktaTanah> }>(`/akta/pembeli/${id}`);
+  const { data: aktaListByPenjual } = useSWR<{ data: Array<AktaTanah> }>(`/akta/penjual/${id}`);
+
+  const aktaId =
+    aktaListByPembeli?.data.find((akta) => akta.idDokumen === details?.id)?.id ??
+    aktaListByPenjual?.data.find((akta) => akta.idDokumen === details?.id)?.id;
 
   if (isLoading) {
     return <LoadingDetailsPlaceholder />;
@@ -211,7 +224,18 @@ export function DokumenDetails({
         </div>
       </dl>
 
-      {["notaris", "bank"].includes(userType) && <DokumenApproval details={details} />}
+      {(userType === "bank" || userType === "notaris") && <DokumenApproval details={details} />}
+      {userType === "user" && details.status === "Approve" && (
+        <div className="flex justify-end">
+          <Button
+            onClick={() => router.push(`/akta-tanah/${aktaId}`)}
+            variant="secondary"
+            className="rounded-tremor-small"
+          >
+            Lihat Akta Tanah
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

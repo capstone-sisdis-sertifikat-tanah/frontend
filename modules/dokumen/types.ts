@@ -30,4 +30,5 @@ export interface Sertifikat {
   idAkta: string;
   lat: string;
   long: string;
+  lokasi: string;
 }
