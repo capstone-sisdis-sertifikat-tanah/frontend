@@ -101,7 +101,7 @@ export function SertifikatDetails({
   } = useUser();
 
   const { data: aktaTanah, isLoading: isLoadingAkta } = useSWR<{ data: AktaTanahResponse }>(
-    `/akta/${details?.akta.id}`
+    `/akta/${details?.akta?.id}`
   );
 
   if (isLoading || isLoadingAkta) {
@@ -259,7 +259,7 @@ function SertifikatDetailsComponent({
                   <p className="text-sm font-semibold leading-6 text-gray-900">
                     Penjual <span className="text-[11px] text-orange-600">(signature)</span>
                   </p>
-                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">{akta?.TxId}</p>
+                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">{akta?.TxId?.[0]}</p>
                 </div>
               </div>
             </div>
@@ -271,7 +271,7 @@ function SertifikatDetailsComponent({
                   <p className="text-sm font-semibold leading-6 text-gray-900">
                     Pembeli <span className="text-[11px] text-orange-600">(signature)</span>
                   </p>
-                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">{akta?.TxId}</p>
+                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">{akta?.TxId?.[1]}</p>
                 </div>
               </div>
             </div>
