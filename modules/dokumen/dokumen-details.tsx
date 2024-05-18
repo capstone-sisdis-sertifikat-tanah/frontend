@@ -103,7 +103,7 @@ function getSteps(details: DokumenDetailsResponse) {
         name: "Pengajuan pembelian tanah telah disetujui oleh Notaris",
         description: (
           <span>
-            Pengajuan untuk pembelian tanah telah disetujui oleh Notaris. Akta tanah terkait akan diterbitkan oleh
+            Pengajuan untuk pembelian tanah telah disetujui oleh Notaris. Akta jual beli terkait akan diterbitkan oleh
             sistem.
           </span>
         ),
@@ -121,7 +121,8 @@ function getSteps(details: DokumenDetailsResponse) {
             >
               {details.sertifikat.id}
             </a>{" "}
-            telah disetujui oleh Bank dan Notaris. Pembeli dan Penjual dapat melanjutkan proses persetujuan akta tanah.
+            telah disetujui oleh Bank dan Notaris. Pembeli dan Penjual dapat melanjutkan proses persetujuan akta jual
+            beli.
           </span>
         ),
         status: "complete",
@@ -191,34 +192,47 @@ export function DokumenDetails({
           <dt className="text-sm font-medium leading-6 text-gray-900">Pihak yang terlibat</dt>
           <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
             <ul role="list" className="mt-4 grid sm:grid-cols-2 gap-4">
-              {[details.pembeli, details.penjual].map((person, i) => (
-                <li key={person.email} className="flex justify-between gap-x-6 p-5 border shadow-sm rounded-md">
-                  <div className="flex gap-x-4 w-full">
-                    <Avatar />
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold leading-6 text-gray-900">{person.name}</p>
-                      <p className="flex text-xs leading-5 text-gray-500">
-                        <a href={`mailto:${person.email}`} className="truncate hover:underline">
-                          {person.email}
-                        </a>
-                      </p>
+              {[details.pembeli, details.penjual].map((person, i) => {
+                const isApproved = details.status === "Approve";
+                const hasSignatures = details.signatures?.length > 0;
+                return (
+                  <li key={person.email} className="flex justify-between gap-x-6 p-5 border shadow-sm rounded-md">
+                    <div className="flex gap-x-4 w-full">
+                      <Avatar />
+                      <div className="flex-1">
+                        <p className="flex text-xs leading-5 text-blue-500">
+                          <a href={`mailto:${person.email}`} className="truncate hover:underline">
+                            {person.email}
+                          </a>
+                        </p>
+                        {isApproved && hasSignatures && (
+                          <>
+                            <p className="text-xs leading-5 text-gray-800 line-clamp-4 break-all">
+                              {new Date(details.signatures[0].signTime).toLocaleString()}
+                            </p>
+                            <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">
+                              {details.signatures[0].signature}
+                            </p>
+                          </>
+                        )}
 
-                      <div className="mt-2 flex justify-end">
-                        <div
-                          className={clsx(
-                            "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
-                            i === 0
-                              ? "bg-orange-50 text-orange-700 ring-orange-700/10"
-                              : "bg-green-50 text-green-700 ring-green-700/10"
-                          )}
-                        >
-                          {i === 0 ? "Pembeli" : "Penjual"}
+                        <div className="mt-2 flex justify-end">
+                          <div
+                            className={clsx(
+                              "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
+                              i === 0
+                                ? "bg-orange-50 text-orange-700 ring-orange-700/10"
+                                : "bg-green-50 text-green-700 ring-green-700/10"
+                            )}
+                          >
+                            {i === 0 ? "Pembeli" : "Penjual"}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           </dd>
         </div>
@@ -232,7 +246,7 @@ export function DokumenDetails({
             variant="secondary"
             className="rounded-tremor-small"
           >
-            Lihat Akta Tanah
+            Lihat Akta Jual Beli
           </Button>
         </div>
       )}

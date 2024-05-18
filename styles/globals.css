@@ -6,6 +6,8 @@
   :root {
     text-rendering: optimizeLegibility;
     --color-error: #ff5b5b;
+    --progressbar-color: #3b82f6;
+    --progressbar-top: 0;
   }
 }
 

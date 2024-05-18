@@ -39,6 +39,10 @@ export type SertifikatDetails = {
   lat: string;
   long: string;
   lokasi: string;
+  signatures: Array<{
+    signature: string;
+    signTime: string;
+  }>;
 };
 
 function getSteps(history?: { data: Array<Sertifikat> }) {
@@ -73,7 +77,7 @@ function getSteps(history?: { data: Array<Sertifikat> }) {
           <span>
             Sertifikat tanah telah berpindah kepemilikan ke pengguna <b>{sertifikat.idPemilik}</b>. Lihat{" "}
             <a target="_blank" className="hover:underline text-tremor-brand" href={`/akta-tanah/${sertifikat.idAkta}`}>
-              akta tanah terkait
+              akta jual beli terkait
             </a>{" "}
             untuk detail lebih lanjut.
           </span>
@@ -192,7 +196,7 @@ function SertifikatDetailsComponent({
 
       {details.akta && (
         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-gray-900">Akta Tanah</dt>
+          <dt className="text-sm font-medium leading-6 text-gray-900">Akta Jual Beli</dt>
           <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
             <div className="group relative sm:max-w-sm border shadow-sm rounded-md">
               <Link href={`/akta-tanah/${details.akta.id}`}>
@@ -259,7 +263,12 @@ function SertifikatDetailsComponent({
                   <p className="text-sm font-semibold leading-6 text-gray-900">
                     Penjual <span className="text-[11px] text-orange-600">(signature)</span>
                   </p>
-                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">{akta?.TxId?.[0]}</p>
+                  <p className="text-xs leading-5 text-gray-800 line-clamp-4 break-all">
+                    {new Date(details.signatures[0].signTime).toLocaleString()}
+                  </p>
+                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">
+                    {details.signatures[0].signature}
+                  </p>
                 </div>
               </div>
             </div>
@@ -271,7 +280,12 @@ function SertifikatDetailsComponent({
                   <p className="text-sm font-semibold leading-6 text-gray-900">
                     Pembeli <span className="text-[11px] text-orange-600">(signature)</span>
                   </p>
-                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">{akta?.TxId?.[1]}</p>
+                  <p className="text-xs leading-5 text-gray-800 line-clamp-4 break-all">
+                    {new Date(details.signatures[1].signTime).toLocaleString()}
+                  </p>
+                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">
+                    {details.signatures[1].signature}
+                  </p>
                 </div>
               </div>
             </div>

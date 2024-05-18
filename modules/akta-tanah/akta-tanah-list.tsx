@@ -10,8 +10,8 @@ import { DokumenDetailsResponse } from "@/modules/dokumen";
 import { AktaTanahStatus } from "./types";
 
 const placeholderProps = {
-  title: "Akta tanah tidak ditemukan",
-  description: "Setiap akta tanah yang terdaftar akan ditampilkan disini.",
+  title: "Akta jual beli tidak ditemukan",
+  description: "Setiap akta jual beli yang terdaftar akan ditampilkan disini.",
 };
 
 export type AktaTanah = {

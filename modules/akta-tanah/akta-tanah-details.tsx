@@ -35,30 +35,32 @@ function getSteps(details: AktaTanahResponse) {
     case "Menunggu Persetujuan Penjual":
       steps.push({
         name: "Menunggu Persetujuan Penjual",
-        description: <span>Menunggu persetujuan dari Penjual. Penjual akan memeriksa akta tanah terkait.</span>,
+        description: <span>Menunggu persetujuan dari Penjual. Penjual akan memeriksa akta jual beli terkait.</span>,
         status: "current",
       });
       return steps;
 
     case "Menunggu Persetujuan Pembeli":
       steps.push({
-        name: "Akta tanah telah disetujui oleh Penjual",
-        description: <span>Akta tanah telah disetujui oleh Penjual. Pembeli akan memeriksa akta tanah terkait.</span>,
+        name: "Akta jual beli telah disetujui oleh Penjual",
+        description: (
+          <span>Akta jual beli telah disetujui oleh Penjual. Pembeli akan memeriksa akta jual beli terkait.</span>
+        ),
         status: "complete",
       });
       steps.push({
         name: "Menunggu Persetujuan Pembeli",
-        description: <span>Menunggu persetujuan dari Pembeli. Pembeli akan memeriksa akta tanah terkait.</span>,
+        description: <span>Menunggu persetujuan dari Pembeli. Pembeli akan memeriksa akta jual beli terkait.</span>,
         status: "current",
       });
       return steps;
 
     case "reject":
       steps.push({
-        name: "Akta tanah ditolak",
+        name: "Akta jual beli ditolak",
         description: (
           <span>
-            Akta tanah dengan sertifikat tanah{" "}
+            Akta jual beli dengan sertifikat tanah{" "}
             <a
               target="_blank"
               className="hover:underline text-tremor-brand"
@@ -75,22 +77,26 @@ function getSteps(details: AktaTanahResponse) {
 
     case "Approve":
       steps.push({
-        name: "Akta tanah telah disetujui oleh Penjual",
-        description: <span>Akta tanah telah disetujui oleh Penjual. Pembeli akan memeriksa akta tanah terkait.</span>,
-        status: "complete",
-      });
-      steps.push({
-        name: "Akta tanah telah disetujui oleh Pembeli",
+        name: "Akta jual beli telah disetujui oleh Penjual",
         description: (
-          <span>Akta tanah telah disetujui oleh Pembeli. Sertifikat tanah terkait akan diterbitkan oleh sistem.</span>
+          <span>Akta jual beli telah disetujui oleh Penjual. Pembeli akan memeriksa akta jual beli terkait.</span>
         ),
         status: "complete",
       });
       steps.push({
-        name: "Akta tanah telah disetujui",
+        name: "Akta jual beli telah disetujui oleh Pembeli",
         description: (
           <span>
-            Akta tanah dengan sertifikat tanah{" "}
+            Akta jual beli telah disetujui oleh Pembeli. Sertifikat tanah terkait akan diterbitkan oleh sistem.
+          </span>
+        ),
+        status: "complete",
+      });
+      steps.push({
+        name: "Akta jual beli telah disetujui",
+        description: (
+          <span>
+            Akta jual beli dengan sertifikat tanah{" "}
             <a
               target="_blank"
               className="hover:underline text-tremor-brand"
@@ -154,7 +160,7 @@ export function AktaTanahDetails({
         </div>
 
         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-gray-900">Riwayat Akta Tanah</dt>
+          <dt className="text-sm font-medium leading-6 text-gray-900">Riwayat Akta Jual Beli</dt>
           <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
             <Steps steps={getSteps(details)} isCanceled={isRejected} />
           </dd>
@@ -164,34 +170,47 @@ export function AktaTanahDetails({
           <dt className="text-sm font-medium leading-6 text-gray-900">Pihak yang terlibat</dt>
           <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
             <ul role="list" className="mt-4 grid sm:grid-cols-2 gap-4">
-              {[details.pembeli, details.penjual].map((person, i) => (
-                <li key={person.email} className="flex justify-between gap-x-6 p-5 border shadow-sm rounded-md">
-                  <div className="flex gap-x-4 w-full">
-                    <Avatar />
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold leading-6 text-gray-900">{person.name}</p>
-                      <p className="flex text-xs leading-5 text-gray-500">
-                        <a href={`mailto:${person.email}`} className="truncate hover:underline">
-                          {person.email}
-                        </a>
-                      </p>
+              {[details.pembeli, details.penjual].map((person, i) => {
+                const isApproved = details.status === "Approve" || details.status === "Sudah Tidak Berlaku";
+                const hasSignatures = details.signatures?.length > 0;
+                return (
+                  <li key={person.email} className="flex justify-between gap-x-6 p-5 border shadow-sm rounded-md">
+                    <div className="flex gap-x-4 w-full">
+                      <Avatar />
+                      <div className="flex-1">
+                        <p className="flex text-xs leading-5 text-blue-500">
+                          <a href={`mailto:${person.email}`} className="truncate hover:underline">
+                            {person.email}
+                          </a>
+                        </p>
+                        {isApproved && hasSignatures && (
+                          <>
+                            <p className="text-xs leading-5 text-gray-800 line-clamp-4 break-all">
+                              {new Date(details.signatures[0].signTime).toLocaleString()}
+                            </p>
+                            <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">
+                              {details.signatures[0].signature}
+                            </p>
+                          </>
+                        )}
 
-                      <div className="mt-2 flex justify-end">
-                        <div
-                          className={clsx(
-                            "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
-                            i === 0
-                              ? "bg-orange-50 text-orange-700 ring-orange-700/10"
-                              : "bg-green-50 text-green-700 ring-green-700/10"
-                          )}
-                        >
-                          {i === 0 ? "Pembeli" : "Penjual"}
+                        <div className="mt-2 flex justify-end">
+                          <div
+                            className={clsx(
+                              "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
+                              i === 0
+                                ? "bg-orange-50 text-orange-700 ring-orange-700/10"
+                                : "bg-green-50 text-green-700 ring-green-700/10"
+                            )}
+                          >
+                            {i === 0 ? "Pembeli" : "Penjual"}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           </dd>
         </div>

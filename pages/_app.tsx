@@ -13,6 +13,13 @@ import { useUser } from "@/hooks/use-user";
 import React from "react";
 import { BannerProvider } from "@/hooks/use-banner";
 import { TabProvider } from "@/components/tabs";
+import Router from "next/router";
+
+import nProgress from "nprogress";
+
+Router.events.on("routeChangeStart", nProgress.start);
+Router.events.on("routeChangeError", nProgress.done);
+Router.events.on("routeChangeComplete", nProgress.done);
 
 const inter = Inter({ subsets: ["latin"] });
 

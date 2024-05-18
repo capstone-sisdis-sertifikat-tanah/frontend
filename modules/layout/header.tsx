@@ -24,7 +24,7 @@ const navigation: {
       href: "/dashboard",
     },
     { name: "Pengajuan Jual Beli", href: "/pengajuan" },
-    { name: "Akta Tanah", href: "/akta-tanah" },
+    { name: "Akta Jual Beli", href: "/akta-tanah" },
     { name: "Sertifikat Tanah", href: "/sertifikat" },
   ],
   bank: [
@@ -60,7 +60,7 @@ const navigation: {
       href: "/dashboard",
     },
     { name: "Pengajuan Jual Beli", href: "/pengajuan" },
-    { name: "Akta Tanah", href: "/akta-tanah" },
+    { name: "Akta Jual Beli", href: "/akta-tanah" },
   ],
 };
 

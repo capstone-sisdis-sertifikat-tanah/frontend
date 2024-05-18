@@ -14,13 +14,13 @@ export default function AktaTanahDetailsPage() {
   const { data: aktaTanah, isLoading } = useSWR<{ data: AktaTanahResponse }>(`/akta/${id}`);
 
   if (!aktaTanah && !isLoading) {
-    return <NotFoundPlaceholder description="Maaf, akta tanah yang Anda cari tidak ditemukan." />;
+    return <NotFoundPlaceholder description="Maaf, akta jual beli yang Anda cari tidak ditemukan." />;
   }
 
   return (
     <main>
-      <h1 className="text-tremor-title font-semibold">Rincian akta tanah</h1>
-      <Text className="mt-0.5">Lihat rincian akta tanah yang terdaftar.</Text>
+      <h1 className="text-tremor-title font-semibold">Rincian akta jual beli</h1>
+      <Text className="mt-0.5">Lihat rincian akta jual beli yang terdaftar.</Text>
 
       <div className="mt-4">
         <AktaTanahDetails details={aktaTanah?.data} isLoading={isLoading} />

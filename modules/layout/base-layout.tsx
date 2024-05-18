@@ -25,12 +25,14 @@ export default function BaseLayout({ children }: { children: React.ReactNode }) 
 
   React.useEffect(() => {
     if (state === "unauthenticated" && authenticatedPaths.includes(pathname)) {
+      document.documentElement.style.setProperty("--progressbar-top", "0px");
       router.replace("/login");
     }
   }, [pathname, router, state]);
 
   React.useEffect(() => {
     if (state === "authenticated" && unauthenticatedPaths.includes(pathname)) {
+      document.documentElement.style.setProperty("--progressbar-top", "64px");
       router.replace("/dashboard");
     }
   }, [pathname, router, state]);

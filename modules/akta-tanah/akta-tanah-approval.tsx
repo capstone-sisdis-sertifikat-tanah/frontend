@@ -53,7 +53,7 @@ export function AktaTanahApproval({ details }: { details: AktaTanahResponse }) {
               status: "reject",
             });
 
-            toast.success("Akta tanah telah ditolak.");
+            toast.success("Akta jual beli telah ditolak.");
           }}
           className="rounded-tremor-small bg-red-500 border-red-500 hover:bg-red-600 hover:border-red-600"
         >
@@ -70,7 +70,7 @@ export function AktaTanahApproval({ details }: { details: AktaTanahResponse }) {
             status: "approve",
           });
 
-          toast.success("Akta tanah telah disetujui.");
+          toast.success("Akta jual beli telah disetujui.");
 
           await mutate({
             approvers: [...details.approvers, id],

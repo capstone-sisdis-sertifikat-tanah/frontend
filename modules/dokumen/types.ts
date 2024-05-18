@@ -6,6 +6,10 @@ export interface DokumenDetailsResponse {
   approvers: string[];
   sertifikat: Sertifikat;
   TxId: string[];
+  signatures: Array<{
+    signature: string;
+    signTime: string;
+  }>;
 }
 
 export type DokumenStatus = "Menunggu Persetujuan Bank" | "Menunggu Persetujuan Notaris" | "Approve" | "reject";

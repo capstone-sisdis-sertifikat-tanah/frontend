@@ -6,6 +6,10 @@ export interface AktaTanahResponse {
   status: AktaTanahStatus;
   approvers: string[];
   TxId: string[];
+  signatures: Array<{
+    signature: string;
+    signTime: string;
+  }>;
 }
 
 export type AktaTanahStatus =

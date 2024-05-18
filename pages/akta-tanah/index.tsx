@@ -10,9 +10,11 @@ export default function AktaTanahPage() {
   } = useUser();
   return (
     <main>
-      <h1 className="text-tremor-title font-semibold">Manajemen Akta Tanah</h1>
-      {userType === "user" && <Text className="mt-0.5">Kelola akta tanah Anda yang terdaftar di dalam sistem.</Text>}
-      {userType !== "user" && <Text className="mt-0.5">Daftar akta tanah yang terdaftar di dalam sistem.</Text>}
+      <h1 className="text-tremor-title font-semibold">Manajemen Akta Jual Beli</h1>
+      {userType === "user" && (
+        <Text className="mt-0.5">Kelola akta jual beli Anda yang terdaftar di dalam sistem.</Text>
+      )}
+      {userType !== "user" && <Text className="mt-0.5">Daftar akta jual beli yang terdaftar di dalam sistem.</Text>}
 
       {userType === "user" && (
         <Tabs
@@ -27,4 +29,4 @@ export default function AktaTanahPage() {
   );
 }
 
-AktaTanahPage.title = "Manajemen Akta Tanah | Sistem Penerbitan Sertifikat Tanah";
+AktaTanahPage.title = "Manajemen Akta Jual Beli | Sistem Penerbitan Sertifikat Tanah";
