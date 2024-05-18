@@ -263,12 +263,17 @@ function SertifikatDetailsComponent({
                   <p className="text-sm font-semibold leading-6 text-gray-900">
                     Penjual <span className="text-[11px] text-orange-600">(signature)</span>
                   </p>
-                  <p className="text-xs leading-5 text-gray-800 line-clamp-4 break-all">
-                    {new Date(details.signatures[0].signTime).toLocaleString()}
-                  </p>
-                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">
-                    {details.signatures[0].signature}
-                  </p>
+                  {details.signatures?.length > 0 && (
+                    <>
+                      {" "}
+                      <p className="text-xs leading-5 text-gray-800 line-clamp-4 break-all">
+                        {new Date(details.signatures[0].signTime).toLocaleString()}
+                      </p>
+                      <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">
+                        {details.signatures[0].signature}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -280,12 +285,16 @@ function SertifikatDetailsComponent({
                   <p className="text-sm font-semibold leading-6 text-gray-900">
                     Pembeli <span className="text-[11px] text-orange-600">(signature)</span>
                   </p>
-                  <p className="text-xs leading-5 text-gray-800 line-clamp-4 break-all">
-                    {new Date(details.signatures[1].signTime).toLocaleString()}
-                  </p>
-                  <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">
-                    {details.signatures[1].signature}
-                  </p>
+                  {details.signatures?.length > 0 && (
+                    <>
+                      <p className="text-xs leading-5 text-gray-800 line-clamp-4 break-all">
+                        {new Date(details.signatures[1].signTime).toLocaleString()}
+                      </p>
+                      <p className="text-xs leading-5 text-gray-500 line-clamp-4 break-all">
+                        {details.signatures[1].signature}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
